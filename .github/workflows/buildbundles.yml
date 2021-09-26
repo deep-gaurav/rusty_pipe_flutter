@@ -13,9 +13,9 @@ jobs:
           channel: beta
       - run: flutter config --enable-windows-desktop
       - run: flutter build windows --release
-      - run: powershell Compress-Archive build\windows\runner\release windows-release.zip
+      # - run: powershell Compress-Archive build\windows\runner\release windows-release.zip
       - uses: actions/upload-artifact@v2
         with:
-          name: windows-release.zip
-          path: windows-release.zip
+          name: windows-release
+          path: build\windows\runner\release
       
