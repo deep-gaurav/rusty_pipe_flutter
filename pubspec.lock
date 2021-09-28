@@ -436,7 +436,7 @@ packages:
     description:
       path: "packages/rustypipeuinative"
       ref: HEAD
-      resolved-ref: "4b31ae41e481b09e8581907931149eda641c36f0"
+      resolved-ref: c73e3e625a0820b24bff9ab8be85c46cdbd9c467
       url: "https://github.com/deep-gaurav/rusty_pipe_ui.git"
     source: git
     version: "0.0.1"
