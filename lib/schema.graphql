@@ -1,0 +1,111 @@
+schema {
+  query: QueryRoot
+  subscription: SubscriptionRoot
+}
+
+# Directs the executor to query only when the field exists.
+directive @ifdef on FIELD
+
+type ChannelResult {
+  name: String!
+  channelId: String!
+  thumbnail: [Thumbnail!]!
+  url: String!
+  subscribers: Int
+  videos: Int
+  description: String
+}
+
+union PlayerMessage = PlayerStatus
+
+type PlayerStatus {
+  playing: Boolean!
+  currentStatus: Int
+  totalTime: Int
+}
+
+type PlaylistResult {
+  name: String!
+  playlistId: String!
+  thumbnail: [Thumbnail!]!
+  url: String!
+  uploaderName: String
+  videos: Int
+}
+
+type QueryRoot {
+  video(videoId: String!): Video!
+  search(query: String!, pageUrl: String): Search!
+  play(videoId: String!): Boolean!
+  pause: Boolean!
+  resume: Boolean!
+  seek(seconds: Int!): Boolean!
+}
+
+type Search {
+  suggestion: [String!]!
+  result: [SearchResult!]!
+  nextPageUrl: String
+}
+
+union SearchResult = VideoResult | PlaylistResult | ChannelResult
+
+type StreamItem {
+  url: String!
+  itag: Int!
+  approxDurationMs: String
+  audioChannels: Int
+  audioQuality: String
+  audioSampleRate: String
+  averageBitrate: Int
+  bitrate: Int!
+  contentLength: String
+  height: Int
+  width: Int
+  quality: String!
+  qualityLabel: String
+  lastModified: String!
+  mimeType: String!
+}
+
+type SubscriptionRoot {
+  playerMessages: PlayerMessage!
+}
+
+type Thumbnail {
+  url: String!
+  width: Int!
+  height: Int!
+}
+
+type Video {
+  videoStreams: [StreamItem!]!
+  videoOnlyStreams: [StreamItem!]!
+  audioOnlyStreams: [StreamItem!]!
+  title: String!
+  description: String!
+  uploaderName: String!
+  uploaderUrl: String!
+  videoThumbnails: [Thumbnail!]!
+  uploaderThumbnails: [Thumbnail!]!
+  likes: Int!
+  dislikes: Int!
+  views: Int!
+  length: Int!
+  related: [SearchResult!]!
+}
+
+type VideoResult {
+  name: String!
+  videoId: String!
+  isAd: Boolean!
+  isPremiumVideo: Boolean!
+  url: String!
+  isLive: Boolean!
+  duration: Int
+  uploaderName: String
+  uploaderUrl: String
+  uploadDate: String
+  viewCount: Int
+  thumbnail: [Thumbnail!]!
+}

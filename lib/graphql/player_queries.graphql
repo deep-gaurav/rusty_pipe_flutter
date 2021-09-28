@@ -1,0 +1,12 @@
+query play($videoId:String!){
+  play(videoId:$videoId)
+}
+query pause{
+  pause
+}
+query resume{
+  resume
+}
+query seek($seconds:Int!){
+  seek(seconds:$seconds)
+}

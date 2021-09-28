@@ -1,0 +1,13 @@
+fragment playerStatusFields on PlayerStatus{
+  playing
+  currentStatus
+  totalTime
+}
+subscription playerMessages {
+  playerMessages{
+    __typename
+    ...on PlayerStatus{
+      ...playerStatusFields
+    }
+  }
+}

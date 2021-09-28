@@ -1,55 +1,24 @@
+import 'package:artemis/artemis.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:gql_websocket_link/gql_websocket_link.dart';
+import 'package:rusty_pipe_flutter/networking/client_provider.dart';
+import 'package:rusty_pipe_flutter/screens/home.dart';
+import 'package:rusty_pipe_flutter/screens/player.dart';
 import 'package:rustypipeuinative/rustypipeuinative.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(AppRunner());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
+class AppRunner extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+  State<AppRunner> createState() => _AppRunnerState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _AppRunnerState extends State<AppRunner> {
   int? port;
 
   @override
@@ -57,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       setState(() {
         port = Rustypipeuinative.getPort();
-        Rustypipeuinative.startServer(port ?? 0);
+        Rustypipeuinative.startServer(port!);
       });
     });
     super.initState();
@@ -65,17 +34,76 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Server Running on $port'),
-          ],
+    if (port == null) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Container(
+                child: Text("Cant start rustypipe."),
+              ),
+              TextField(
+                decoration: InputDecoration(helperText: 'Enter port'),
+                onSubmitted: (val) {
+                  var port = int.tryParse(val);
+                  setState(() {
+                    this.port = port;
+                  });
+                },
+              )
+            ],
+          ),
         ),
+      );
+    } else {
+      return MyApp(port: port!);
+    }
+  }
+}
+
+class MyApp extends StatefulWidget {
+  final int port;
+  const MyApp({Key? key, required this.port}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  GlobalKey<PlayerState> playerKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return RustyPipeClient(
+      artemisClient: ArtemisClient.fromLink(
+        WebSocketLink(
+          null,
+          channelGenerator: () => WebSocketChannel.connect(
+            Uri.parse(
+              'ws://localhost:${widget.port}/graphql',
+              // 'ws://localhost:8000/',
+            ),
+            protocols: ['graphql-ws'],
+          ),
+        ),
+      ),
+      // artemisClient: ArtemisClient('http://localhost:$port'),
+      port: widget.port,
+      child: MaterialApp(
+        home: Builder(builder: (context) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            builder: (context, child) {
+              return PlayerManager(
+                  playerState: playerKey,
+                  child: Player(child: child ?? Container(), key: playerKey));
+            },
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: Home(),
+          );
+        }),
       ),
     );
   }
