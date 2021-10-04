@@ -10,10 +10,12 @@ import 'package:rustypipeuinative/rustypipeuinative.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
-  runApp(AppRunner());
+  runApp(const AppRunner());
 }
 
 class AppRunner extends StatefulWidget {
+  const AppRunner({Key? key}) : super(key: key);
+
   @override
   State<AppRunner> createState() => _AppRunnerState();
 }
@@ -25,8 +27,8 @@ class _AppRunnerState extends State<AppRunner> {
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       setState(() {
-        port = Rustypipeuinative.getPort();
-        Rustypipeuinative.startServer(port!);
+        //port = Rustypipeuinative.getPort();
+        //Rustypipeuinative.startServer(port!);
       });
     });
     super.initState();
@@ -40,10 +42,10 @@ class _AppRunnerState extends State<AppRunner> {
           body: Column(
             children: [
               Container(
-                child: Text("Cant start rustypipe."),
+                child: const Text("Cant start rustypipe."),
               ),
               TextField(
-                decoration: InputDecoration(helperText: 'Enter port'),
+                decoration: const InputDecoration(helperText: 'Enter port'),
                 onSubmitted: (val) {
                   var port = int.tryParse(val);
                   setState(() {
@@ -92,14 +94,14 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         home: Builder(builder: (context) {
           return MaterialApp(
-            title: 'Flutter Demo',
+            title: 'Rusty Pipe',
             builder: (context, child) {
               return PlayerManager(
                   playerState: playerKey,
                   child: Player(child: child ?? Container(), key: playerKey));
             },
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: Colors.green,
             ),
             home: Home(),
           );
