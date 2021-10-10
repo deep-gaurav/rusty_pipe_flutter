@@ -5,6 +5,9 @@ import 'package:rusty_pipe_flutter/api/api.graphql.dart';
 import 'package:rusty_pipe_flutter/networking/client_provider.dart';
 import 'package:rusty_pipe_flutter/utils/humanize.dart';
 
+// repeat states enum
+enum Repeat { off, all, single }
+
 class PlayerManager extends InheritedWidget {
   const PlayerManager({
     Key? key,
@@ -47,6 +50,8 @@ class PlayerState extends State<Player> {
 
   bool isloading = false;
 
+  Repeat repeatState = Repeat.off;
+
   Stream<GraphQLResponse<PlayerMessages$SubscriptionRoot>>? playerSubscription;
 
   setCurretlyPlaying(VideoResultFieldsMixin video) {
@@ -73,6 +78,13 @@ class PlayerState extends State<Player> {
 
   next() {}
 
+  repeat() {
+    setState(() {
+      repeatState = Repeat.values[(repeatState.index + 1) %
+          Repeat.values.length]; // change to next state
+    });
+  }
+
   seekTo(int seconds) async {
     var distance = seconds - (playingStatus?.currentStatus ?? 0);
     await RustyPipeClient.of(context)!
@@ -86,6 +98,32 @@ class PlayerState extends State<Player> {
     }
   }
 
+  void onEnd() async {
+    // check and handle repeat
+    switch (repeatState) {
+      case Repeat.off:
+        break;
+      case Repeat.all:
+        break;
+      case Repeat.single:
+        await RustyPipeClient.of(context)!.artemisClient.execute(SeekQuery(
+            variables: SeekArguments(
+                seconds: 0 - (playingStatus?.currentStatus ?? 0))));
+        break;
+    }
+  }
+
+  Icon getRepeatIcon(BuildContext context) {
+    switch (repeatState) {
+      case Repeat.off:
+        return Icon(Icons.repeat, color: Theme.of(context).disabledColor);
+      case Repeat.all:
+        return const Icon(Icons.repeat);
+      case Repeat.single:
+        return const Icon(Icons.repeat_one);
+    }
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
@@ -96,6 +134,7 @@ class PlayerState extends State<Player> {
           .asBroadcastStream();
       // playerSubscription!.asBroadcastStream()
       playerSubscription!.forEach((element) {
+        bool isEndedPreviously = isEnded;
         if (element.data != null) {
           if (element.data?.playerMessages
               is PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus) {
@@ -110,6 +149,9 @@ class PlayerState extends State<Player> {
               }
             });
           }
+        }
+        if (isEnded && !isEndedPreviously) {
+          onEnd();
         }
       });
     });
@@ -130,7 +172,7 @@ class PlayerState extends State<Player> {
               children: [
                 Container(
                   height: 60,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   color: Theme.of(context).primaryColorLight,
                   child: Row(
                     children: [
@@ -140,7 +182,7 @@ class PlayerState extends State<Player> {
                               onPressed: previous,
                               icon: const Icon(Icons.skip_previous)),
                           if (isloading) ...[
-                            Container(child: CircularProgressIndicator()),
+                            Container(child: const CircularProgressIndicator()),
                           ] else ...[
                             TweenAnimationBuilder<double>(
                               tween: Tween(
@@ -175,25 +217,26 @@ class PlayerState extends State<Player> {
                               "${humanizeDuration(Duration(seconds: playingStatus?.currentStatus ?? 0))}/${humanizeDuration(Duration(seconds: playingStatus?.totalTime ?? 0))}"),
                         ],
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Row(children: [
                         if (getThumbnailUrl() != null)
                           Container(
-                              margin: EdgeInsets.symmetric(vertical: 10),
+                              margin: const EdgeInsets.symmetric(vertical: 10),
                               child: ClipRRect(
                                 child: Image.network(getThumbnailUrl()!),
                                 borderRadius: BorderRadius.circular(10),
                               )),
                         if (currentyPlaying != null)
                           Container(
-                            margin: EdgeInsets.only(left: 10),
+                            margin: const EdgeInsets.only(left: 10),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   currentyPlaying!.name,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   currentyPlaying!.uploaderName ?? '',
@@ -202,17 +245,18 @@ class PlayerState extends State<Player> {
                             ),
                           )
                       ]),
-                      Spacer(),
+                      const Spacer(),
                       Row(
                         children: [
-                          IconButton(
+                          const IconButton(
                               onPressed: null, icon: Icon(Icons.volume_up)),
-                          IconButton(onPressed: null, icon: Icon(Icons.repeat)),
                           IconButton(
+                              onPressed: repeat, icon: getRepeatIcon(context)),
+                          const IconButton(
                               onPressed: null, icon: Icon(Icons.shuffle)),
                           Container(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: IconButton(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: const IconButton(
                               onPressed: null,
                               icon: Icon(
                                 Icons.arrow_drop_up,
@@ -241,10 +285,14 @@ class PlayerState extends State<Player> {
                         });
                       },
                       onChangeEnd: (val) {
+                        seekTo(val.toInt());
                         setState(() {
                           _tmpSliderValue = null;
+                          playingStatus?.currentStatus = val.toInt();
+                          if (playingStatus!.playing) {
+                            isloading = true;
+                          }
                         });
-                        seekTo(val.toInt());
                       },
                     ),
                   ),
