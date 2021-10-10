@@ -7,6 +7,11 @@ import 'package:equatable/equatable.dart';
 import 'package:gql/ast.dart';
 part 'api.graphql.g.dart';
 
+mixin PlayerStatusFieldsMixin {
+  late bool playing;
+  int? currentStatus;
+  int? totalTime;
+}
 mixin VideoResultFieldsMixin {
   late String videoId;
   late String url;
@@ -18,10 +23,137 @@ mixin VideoResultFieldsMixin {
   String? uploadDate;
   int? viewCount;
 }
-mixin PlayerStatusFieldsMixin {
-  late bool playing;
-  int? currentStatus;
-  int? totalTime;
+mixin VideoFieldsMixin {
+  late List<VideoFieldsMixin$StreamItem> audioOnlyStreams;
+}
+
+@JsonSerializable(explicitToJson: true)
+class Play$QueryRoot extends JsonSerializable with EquatableMixin {
+  Play$QueryRoot();
+
+  factory Play$QueryRoot.fromJson(Map<String, dynamic> json) =>
+      _$Play$QueryRootFromJson(json);
+
+  late bool play;
+
+  @override
+  List<Object?> get props => [play];
+  @override
+  Map<String, dynamic> toJson() => _$Play$QueryRootToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Pause$QueryRoot extends JsonSerializable with EquatableMixin {
+  Pause$QueryRoot();
+
+  factory Pause$QueryRoot.fromJson(Map<String, dynamic> json) =>
+      _$Pause$QueryRootFromJson(json);
+
+  late bool pause;
+
+  @override
+  List<Object?> get props => [pause];
+  @override
+  Map<String, dynamic> toJson() => _$Pause$QueryRootToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Resume$QueryRoot extends JsonSerializable with EquatableMixin {
+  Resume$QueryRoot();
+
+  factory Resume$QueryRoot.fromJson(Map<String, dynamic> json) =>
+      _$Resume$QueryRootFromJson(json);
+
+  late bool resume;
+
+  @override
+  List<Object?> get props => [resume];
+  @override
+  Map<String, dynamic> toJson() => _$Resume$QueryRootToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Seek$QueryRoot extends JsonSerializable with EquatableMixin {
+  Seek$QueryRoot();
+
+  factory Seek$QueryRoot.fromJson(Map<String, dynamic> json) =>
+      _$Seek$QueryRootFromJson(json);
+
+  late bool seek;
+
+  @override
+  List<Object?> get props => [seek];
+  @override
+  Map<String, dynamic> toJson() => _$Seek$QueryRootToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus
+    extends PlayerMessages$SubscriptionRoot$PlayerMessage
+    with EquatableMixin, PlayerStatusFieldsMixin {
+  PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus();
+
+  factory PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus.fromJson(
+          Map<String, dynamic> json) =>
+      _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusFromJson(
+          json);
+
+  @override
+  List<Object?> get props => [playing, currentStatus, totalTime];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PlayerMessages$SubscriptionRoot$PlayerMessage extends JsonSerializable
+    with EquatableMixin {
+  PlayerMessages$SubscriptionRoot$PlayerMessage();
+
+  factory PlayerMessages$SubscriptionRoot$PlayerMessage.fromJson(
+      Map<String, dynamic> json) {
+    switch (json['__typename'].toString()) {
+      case r'PlayerStatus':
+        return PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus
+            .fromJson(json);
+      default:
+    }
+    return _$PlayerMessages$SubscriptionRoot$PlayerMessageFromJson(json);
+  }
+
+  @JsonKey(name: '__typename')
+  String? $$typename;
+
+  @override
+  List<Object?> get props => [$$typename];
+  @override
+  Map<String, dynamic> toJson() {
+    switch ($$typename) {
+      case r'PlayerStatus':
+        return (this
+                as PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus)
+            .toJson();
+      default:
+    }
+    return _$PlayerMessages$SubscriptionRoot$PlayerMessageToJson(this);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class PlayerMessages$SubscriptionRoot extends JsonSerializable
+    with EquatableMixin {
+  PlayerMessages$SubscriptionRoot();
+
+  factory PlayerMessages$SubscriptionRoot.fromJson(Map<String, dynamic> json) =>
+      _$PlayerMessages$SubscriptionRootFromJson(json);
+
+  late PlayerMessages$SubscriptionRoot$PlayerMessage playerMessages;
+
+  @override
+  List<Object?> get props => [playerMessages];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$PlayerMessages$SubscriptionRootToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -136,132 +268,359 @@ class Search$QueryRoot extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus
-    extends PlayerMessages$SubscriptionRoot$PlayerMessage
-    with EquatableMixin, PlayerStatusFieldsMixin {
-  PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus();
+class VideoFieldsMixin$StreamItem extends JsonSerializable with EquatableMixin {
+  VideoFieldsMixin$StreamItem();
 
-  factory PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus.fromJson(
-          Map<String, dynamic> json) =>
-      _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusFromJson(
-          json);
+  factory VideoFieldsMixin$StreamItem.fromJson(Map<String, dynamic> json) =>
+      _$VideoFieldsMixin$StreamItemFromJson(json);
+
+  late String url;
+
+  late String mimeType;
+
+  late String quality;
+
+  late int bitrate;
+
+  String? qualityLabel;
+
+  String? audioQuality;
+
+  int? audioChannels;
+
+  int? averageBitrate;
+
+  String? audioSampleRate;
 
   @override
-  List<Object?> get props => [playing, currentStatus, totalTime];
+  List<Object?> get props => [
+        url,
+        mimeType,
+        quality,
+        bitrate,
+        qualityLabel,
+        audioQuality,
+        audioChannels,
+        averageBitrate,
+        audioSampleRate
+      ];
   @override
-  Map<String, dynamic> toJson() =>
-      _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusToJson(this);
+  Map<String, dynamic> toJson() => _$VideoFieldsMixin$StreamItemToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class PlayerMessages$SubscriptionRoot$PlayerMessage extends JsonSerializable
-    with EquatableMixin {
-  PlayerMessages$SubscriptionRoot$PlayerMessage();
+class Video$QueryRoot$Video extends JsonSerializable
+    with EquatableMixin, VideoFieldsMixin {
+  Video$QueryRoot$Video();
 
-  factory PlayerMessages$SubscriptionRoot$PlayerMessage.fromJson(
-      Map<String, dynamic> json) {
-    switch (json['__typename'].toString()) {
-      case r'PlayerStatus':
-        return PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus
-            .fromJson(json);
-      default:
-    }
-    return _$PlayerMessages$SubscriptionRoot$PlayerMessageFromJson(json);
-  }
-
-  @JsonKey(name: '__typename')
-  String? $$typename;
+  factory Video$QueryRoot$Video.fromJson(Map<String, dynamic> json) =>
+      _$Video$QueryRoot$VideoFromJson(json);
 
   @override
-  List<Object?> get props => [$$typename];
+  List<Object?> get props => [audioOnlyStreams];
   @override
-  Map<String, dynamic> toJson() {
-    switch ($$typename) {
-      case r'PlayerStatus':
-        return (this
-                as PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus)
-            .toJson();
-      default:
-    }
-    return _$PlayerMessages$SubscriptionRoot$PlayerMessageToJson(this);
-  }
+  Map<String, dynamic> toJson() => _$Video$QueryRoot$VideoToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class PlayerMessages$SubscriptionRoot extends JsonSerializable
-    with EquatableMixin {
-  PlayerMessages$SubscriptionRoot();
+class Video$QueryRoot extends JsonSerializable with EquatableMixin {
+  Video$QueryRoot();
 
-  factory PlayerMessages$SubscriptionRoot.fromJson(Map<String, dynamic> json) =>
-      _$PlayerMessages$SubscriptionRootFromJson(json);
+  factory Video$QueryRoot.fromJson(Map<String, dynamic> json) =>
+      _$Video$QueryRootFromJson(json);
 
-  late PlayerMessages$SubscriptionRoot$PlayerMessage playerMessages;
+  late Video$QueryRoot$Video video;
 
   @override
-  List<Object?> get props => [playerMessages];
+  List<Object?> get props => [video];
   @override
-  Map<String, dynamic> toJson() =>
-      _$PlayerMessages$SubscriptionRootToJson(this);
+  Map<String, dynamic> toJson() => _$Video$QueryRootToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class Play$QueryRoot extends JsonSerializable with EquatableMixin {
-  Play$QueryRoot();
-
-  factory Play$QueryRoot.fromJson(Map<String, dynamic> json) =>
-      _$Play$QueryRootFromJson(json);
-
-  late bool play;
+class PlayArguments extends JsonSerializable with EquatableMixin {
+  PlayArguments({required this.videoId, required this.url, this.filePath});
 
   @override
-  List<Object?> get props => [play];
+  factory PlayArguments.fromJson(Map<String, dynamic> json) =>
+      _$PlayArgumentsFromJson(json);
+
+  late String videoId;
+
+  late String url;
+
+  final String? filePath;
+
   @override
-  Map<String, dynamic> toJson() => _$Play$QueryRootToJson(this);
+  List<Object?> get props => [videoId, url, filePath];
+  @override
+  Map<String, dynamic> toJson() => _$PlayArgumentsToJson(this);
+}
+
+final PLAY_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'play'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'videoId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'url')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'filePath')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'String'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'play'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'videoId'),
+                  value: VariableNode(name: NameNode(value: 'videoId'))),
+              ArgumentNode(
+                  name: NameNode(value: 'url'),
+                  value: VariableNode(name: NameNode(value: 'url'))),
+              ArgumentNode(
+                  name: NameNode(value: 'filePath'),
+                  value: VariableNode(name: NameNode(value: 'filePath')))
+            ],
+            directives: [],
+            selectionSet: null)
+      ]))
+]);
+
+class PlayQuery extends GraphQLQuery<Play$QueryRoot, PlayArguments> {
+  PlayQuery({required this.variables});
+
+  @override
+  final DocumentNode document = PLAY_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = 'play';
+
+  @override
+  final PlayArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  Play$QueryRoot parse(Map<String, dynamic> json) =>
+      Play$QueryRoot.fromJson(json);
+}
+
+final PAUSE_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'pause'),
+      variableDefinitions: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'pause'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
+      ]))
+]);
+
+class PauseQuery extends GraphQLQuery<Pause$QueryRoot, JsonSerializable> {
+  PauseQuery();
+
+  @override
+  final DocumentNode document = PAUSE_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = 'pause';
+
+  @override
+  List<Object?> get props => [document, operationName];
+  @override
+  Pause$QueryRoot parse(Map<String, dynamic> json) =>
+      Pause$QueryRoot.fromJson(json);
+}
+
+final RESUME_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'resume'),
+      variableDefinitions: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'resume'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
+      ]))
+]);
+
+class ResumeQuery extends GraphQLQuery<Resume$QueryRoot, JsonSerializable> {
+  ResumeQuery();
+
+  @override
+  final DocumentNode document = RESUME_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = 'resume';
+
+  @override
+  List<Object?> get props => [document, operationName];
+  @override
+  Resume$QueryRoot parse(Map<String, dynamic> json) =>
+      Resume$QueryRoot.fromJson(json);
 }
 
 @JsonSerializable(explicitToJson: true)
-class Pause$QueryRoot extends JsonSerializable with EquatableMixin {
-  Pause$QueryRoot();
-
-  factory Pause$QueryRoot.fromJson(Map<String, dynamic> json) =>
-      _$Pause$QueryRootFromJson(json);
-
-  late bool pause;
+class SeekArguments extends JsonSerializable with EquatableMixin {
+  SeekArguments({required this.seconds});
 
   @override
-  List<Object?> get props => [pause];
+  factory SeekArguments.fromJson(Map<String, dynamic> json) =>
+      _$SeekArgumentsFromJson(json);
+
+  late int seconds;
+
   @override
-  Map<String, dynamic> toJson() => _$Pause$QueryRootToJson(this);
+  List<Object?> get props => [seconds];
+  @override
+  Map<String, dynamic> toJson() => _$SeekArgumentsToJson(this);
 }
 
-@JsonSerializable(explicitToJson: true)
-class Resume$QueryRoot extends JsonSerializable with EquatableMixin {
-  Resume$QueryRoot();
+final SEEK_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'seek'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'seconds')),
+            type: NamedTypeNode(name: NameNode(value: 'Int'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'seek'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'seconds'),
+                  value: VariableNode(name: NameNode(value: 'seconds')))
+            ],
+            directives: [],
+            selectionSet: null)
+      ]))
+]);
 
-  factory Resume$QueryRoot.fromJson(Map<String, dynamic> json) =>
-      _$Resume$QueryRootFromJson(json);
-
-  late bool resume;
+class SeekQuery extends GraphQLQuery<Seek$QueryRoot, SeekArguments> {
+  SeekQuery({required this.variables});
 
   @override
-  List<Object?> get props => [resume];
+  final DocumentNode document = SEEK_QUERY_DOCUMENT;
+
   @override
-  Map<String, dynamic> toJson() => _$Resume$QueryRootToJson(this);
+  final String operationName = 'seek';
+
+  @override
+  final SeekArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  Seek$QueryRoot parse(Map<String, dynamic> json) =>
+      Seek$QueryRoot.fromJson(json);
 }
 
-@JsonSerializable(explicitToJson: true)
-class Seek$QueryRoot extends JsonSerializable with EquatableMixin {
-  Seek$QueryRoot();
+final PLAYER_MESSAGES_SUBSCRIPTION_DOCUMENT = DocumentNode(definitions: [
+  FragmentDefinitionNode(
+      name: NameNode(value: 'playerStatusFields'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(
+              name: NameNode(value: 'PlayerStatus'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'playing'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'currentStatus'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'totalTime'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
+      ])),
+  OperationDefinitionNode(
+      type: OperationType.subscription,
+      name: NameNode(value: 'playerMessages'),
+      variableDefinitions: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'playerMessages'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: '__typename'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              InlineFragmentNode(
+                  typeCondition: TypeConditionNode(
+                      on: NamedTypeNode(
+                          name: NameNode(value: 'PlayerStatus'),
+                          isNonNull: false)),
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FragmentSpreadNode(
+                        name: NameNode(value: 'playerStatusFields'),
+                        directives: [])
+                  ]))
+            ]))
+      ]))
+]);
 
-  factory Seek$QueryRoot.fromJson(Map<String, dynamic> json) =>
-      _$Seek$QueryRootFromJson(json);
-
-  late bool seek;
+class PlayerMessagesSubscription
+    extends GraphQLQuery<PlayerMessages$SubscriptionRoot, JsonSerializable> {
+  PlayerMessagesSubscription();
 
   @override
-  List<Object?> get props => [seek];
+  final DocumentNode document = PLAYER_MESSAGES_SUBSCRIPTION_DOCUMENT;
+
   @override
-  Map<String, dynamic> toJson() => _$Seek$QueryRootToJson(this);
+  final String operationName = 'playerMessages';
+
+  @override
+  List<Object?> get props => [document, operationName];
+  @override
+  PlayerMessages$SubscriptionRoot parse(Map<String, dynamic> json) =>
+      PlayerMessages$SubscriptionRoot.fromJson(json);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -432,103 +791,94 @@ class SearchQuery extends GraphQLQuery<Search$QueryRoot, SearchArguments> {
       Search$QueryRoot.fromJson(json);
 }
 
-final PLAYER_MESSAGES_SUBSCRIPTION_DOCUMENT = DocumentNode(definitions: [
-  FragmentDefinitionNode(
-      name: NameNode(value: 'playerStatusFields'),
-      typeCondition: TypeConditionNode(
-          on: NamedTypeNode(
-              name: NameNode(value: 'PlayerStatus'), isNonNull: false)),
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'playing'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
-            name: NameNode(value: 'currentStatus'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
-            name: NameNode(value: 'totalTime'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null)
-      ])),
-  OperationDefinitionNode(
-      type: OperationType.subscription,
-      name: NameNode(value: 'playerMessages'),
-      variableDefinitions: [],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'playerMessages'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                  name: NameNode(value: '__typename'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              InlineFragmentNode(
-                  typeCondition: TypeConditionNode(
-                      on: NamedTypeNode(
-                          name: NameNode(value: 'PlayerStatus'),
-                          isNonNull: false)),
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FragmentSpreadNode(
-                        name: NameNode(value: 'playerStatusFields'),
-                        directives: [])
-                  ]))
-            ]))
-      ]))
-]);
-
-class PlayerMessagesSubscription
-    extends GraphQLQuery<PlayerMessages$SubscriptionRoot, JsonSerializable> {
-  PlayerMessagesSubscription();
-
-  @override
-  final DocumentNode document = PLAYER_MESSAGES_SUBSCRIPTION_DOCUMENT;
-
-  @override
-  final String operationName = 'playerMessages';
-
-  @override
-  List<Object?> get props => [document, operationName];
-  @override
-  PlayerMessages$SubscriptionRoot parse(Map<String, dynamic> json) =>
-      PlayerMessages$SubscriptionRoot.fromJson(json);
-}
-
 @JsonSerializable(explicitToJson: true)
-class PlayArguments extends JsonSerializable with EquatableMixin {
-  PlayArguments({required this.videoId});
+class VideoArguments extends JsonSerializable with EquatableMixin {
+  VideoArguments({required this.videoId});
 
   @override
-  factory PlayArguments.fromJson(Map<String, dynamic> json) =>
-      _$PlayArgumentsFromJson(json);
+  factory VideoArguments.fromJson(Map<String, dynamic> json) =>
+      _$VideoArgumentsFromJson(json);
 
   late String videoId;
 
   @override
   List<Object?> get props => [videoId];
   @override
-  Map<String, dynamic> toJson() => _$PlayArgumentsToJson(this);
+  Map<String, dynamic> toJson() => _$VideoArgumentsToJson(this);
 }
 
-final PLAY_QUERY_DOCUMENT = DocumentNode(definitions: [
+final VIDEO_QUERY_DOCUMENT = DocumentNode(definitions: [
+  FragmentDefinitionNode(
+      name: NameNode(value: 'videoFields'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(name: NameNode(value: 'Video'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'audioOnlyStreams'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'url'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'mimeType'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'quality'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'bitrate'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'qualityLabel'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'audioQuality'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'audioChannels'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'averageBitrate'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'audioSampleRate'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ])),
   OperationDefinitionNode(
       type: OperationType.query,
-      name: NameNode(value: 'play'),
+      name: NameNode(value: 'video'),
       variableDefinitions: [
         VariableDefinitionNode(
             variable: VariableNode(name: NameNode(value: 'videoId')),
@@ -540,7 +890,7 @@ final PLAY_QUERY_DOCUMENT = DocumentNode(definitions: [
       directives: [],
       selectionSet: SelectionSetNode(selections: [
         FieldNode(
-            name: NameNode(value: 'play'),
+            name: NameNode(value: 'video'),
             alias: null,
             arguments: [
               ArgumentNode(
@@ -548,150 +898,28 @@ final PLAY_QUERY_DOCUMENT = DocumentNode(definitions: [
                   value: VariableNode(name: NameNode(value: 'videoId')))
             ],
             directives: [],
-            selectionSet: null)
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                  name: NameNode(value: 'videoFields'), directives: [])
+            ]))
       ]))
 ]);
 
-class PlayQuery extends GraphQLQuery<Play$QueryRoot, PlayArguments> {
-  PlayQuery({required this.variables});
+class VideoQuery extends GraphQLQuery<Video$QueryRoot, VideoArguments> {
+  VideoQuery({required this.variables});
 
   @override
-  final DocumentNode document = PLAY_QUERY_DOCUMENT;
+  final DocumentNode document = VIDEO_QUERY_DOCUMENT;
 
   @override
-  final String operationName = 'play';
+  final String operationName = 'video';
 
   @override
-  final PlayArguments variables;
+  final VideoArguments variables;
 
   @override
   List<Object?> get props => [document, operationName, variables];
   @override
-  Play$QueryRoot parse(Map<String, dynamic> json) =>
-      Play$QueryRoot.fromJson(json);
-}
-
-final PAUSE_QUERY_DOCUMENT = DocumentNode(definitions: [
-  OperationDefinitionNode(
-      type: OperationType.query,
-      name: NameNode(value: 'pause'),
-      variableDefinitions: [],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'pause'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null)
-      ]))
-]);
-
-class PauseQuery extends GraphQLQuery<Pause$QueryRoot, JsonSerializable> {
-  PauseQuery();
-
-  @override
-  final DocumentNode document = PAUSE_QUERY_DOCUMENT;
-
-  @override
-  final String operationName = 'pause';
-
-  @override
-  List<Object?> get props => [document, operationName];
-  @override
-  Pause$QueryRoot parse(Map<String, dynamic> json) =>
-      Pause$QueryRoot.fromJson(json);
-}
-
-final RESUME_QUERY_DOCUMENT = DocumentNode(definitions: [
-  OperationDefinitionNode(
-      type: OperationType.query,
-      name: NameNode(value: 'resume'),
-      variableDefinitions: [],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'resume'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null)
-      ]))
-]);
-
-class ResumeQuery extends GraphQLQuery<Resume$QueryRoot, JsonSerializable> {
-  ResumeQuery();
-
-  @override
-  final DocumentNode document = RESUME_QUERY_DOCUMENT;
-
-  @override
-  final String operationName = 'resume';
-
-  @override
-  List<Object?> get props => [document, operationName];
-  @override
-  Resume$QueryRoot parse(Map<String, dynamic> json) =>
-      Resume$QueryRoot.fromJson(json);
-}
-
-@JsonSerializable(explicitToJson: true)
-class SeekArguments extends JsonSerializable with EquatableMixin {
-  SeekArguments({required this.seconds});
-
-  @override
-  factory SeekArguments.fromJson(Map<String, dynamic> json) =>
-      _$SeekArgumentsFromJson(json);
-
-  late int seconds;
-
-  @override
-  List<Object?> get props => [seconds];
-  @override
-  Map<String, dynamic> toJson() => _$SeekArgumentsToJson(this);
-}
-
-final SEEK_QUERY_DOCUMENT = DocumentNode(definitions: [
-  OperationDefinitionNode(
-      type: OperationType.query,
-      name: NameNode(value: 'seek'),
-      variableDefinitions: [
-        VariableDefinitionNode(
-            variable: VariableNode(name: NameNode(value: 'seconds')),
-            type: NamedTypeNode(name: NameNode(value: 'Int'), isNonNull: true),
-            defaultValue: DefaultValueNode(value: null),
-            directives: [])
-      ],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'seek'),
-            alias: null,
-            arguments: [
-              ArgumentNode(
-                  name: NameNode(value: 'seconds'),
-                  value: VariableNode(name: NameNode(value: 'seconds')))
-            ],
-            directives: [],
-            selectionSet: null)
-      ]))
-]);
-
-class SeekQuery extends GraphQLQuery<Seek$QueryRoot, SeekArguments> {
-  SeekQuery({required this.variables});
-
-  @override
-  final DocumentNode document = SEEK_QUERY_DOCUMENT;
-
-  @override
-  final String operationName = 'seek';
-
-  @override
-  final SeekArguments variables;
-
-  @override
-  List<Object?> get props => [document, operationName, variables];
-  @override
-  Seek$QueryRoot parse(Map<String, dynamic> json) =>
-      Seek$QueryRoot.fromJson(json);
+  Video$QueryRoot parse(Map<String, dynamic> json) =>
+      Video$QueryRoot.fromJson(json);
 }

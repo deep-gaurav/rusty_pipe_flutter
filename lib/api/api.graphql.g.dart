@@ -7,6 +7,88 @@ part of 'api.graphql.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+Play$QueryRoot _$Play$QueryRootFromJson(Map<String, dynamic> json) {
+  return Play$QueryRoot()..play = json['play'] as bool;
+}
+
+Map<String, dynamic> _$Play$QueryRootToJson(Play$QueryRoot instance) =>
+    <String, dynamic>{
+      'play': instance.play,
+    };
+
+Pause$QueryRoot _$Pause$QueryRootFromJson(Map<String, dynamic> json) {
+  return Pause$QueryRoot()..pause = json['pause'] as bool;
+}
+
+Map<String, dynamic> _$Pause$QueryRootToJson(Pause$QueryRoot instance) =>
+    <String, dynamic>{
+      'pause': instance.pause,
+    };
+
+Resume$QueryRoot _$Resume$QueryRootFromJson(Map<String, dynamic> json) {
+  return Resume$QueryRoot()..resume = json['resume'] as bool;
+}
+
+Map<String, dynamic> _$Resume$QueryRootToJson(Resume$QueryRoot instance) =>
+    <String, dynamic>{
+      'resume': instance.resume,
+    };
+
+Seek$QueryRoot _$Seek$QueryRootFromJson(Map<String, dynamic> json) {
+  return Seek$QueryRoot()..seek = json['seek'] as bool;
+}
+
+Map<String, dynamic> _$Seek$QueryRootToJson(Seek$QueryRoot instance) =>
+    <String, dynamic>{
+      'seek': instance.seek,
+    };
+
+PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus
+    _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusFromJson(
+        Map<String, dynamic> json) {
+  return PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus()
+    ..playing = json['playing'] as bool
+    ..currentStatus = json['currentStatus'] as int?
+    ..totalTime = json['totalTime'] as int?
+    ..$$typename = json['__typename'] as String?;
+}
+
+Map<String,
+    dynamic> _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusToJson(
+        PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus instance) =>
+    <String, dynamic>{
+      'playing': instance.playing,
+      'currentStatus': instance.currentStatus,
+      'totalTime': instance.totalTime,
+      '__typename': instance.$$typename,
+    };
+
+PlayerMessages$SubscriptionRoot$PlayerMessage
+    _$PlayerMessages$SubscriptionRoot$PlayerMessageFromJson(
+        Map<String, dynamic> json) {
+  return PlayerMessages$SubscriptionRoot$PlayerMessage()
+    ..$$typename = json['__typename'] as String?;
+}
+
+Map<String, dynamic> _$PlayerMessages$SubscriptionRoot$PlayerMessageToJson(
+        PlayerMessages$SubscriptionRoot$PlayerMessage instance) =>
+    <String, dynamic>{
+      '__typename': instance.$$typename,
+    };
+
+PlayerMessages$SubscriptionRoot _$PlayerMessages$SubscriptionRootFromJson(
+    Map<String, dynamic> json) {
+  return PlayerMessages$SubscriptionRoot()
+    ..playerMessages = PlayerMessages$SubscriptionRoot$PlayerMessage.fromJson(
+        json['playerMessages'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$PlayerMessages$SubscriptionRootToJson(
+        PlayerMessages$SubscriptionRoot instance) =>
+    <String, dynamic>{
+      'playerMessages': instance.playerMessages.toJson(),
+    };
+
 VideoResultFieldsMixin$Thumbnail _$VideoResultFieldsMixin$ThumbnailFromJson(
     Map<String, dynamic> json) {
   return VideoResultFieldsMixin$Thumbnail()
@@ -95,86 +177,85 @@ Map<String, dynamic> _$Search$QueryRootToJson(Search$QueryRoot instance) =>
       'search': instance.search.toJson(),
     };
 
-PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus
-    _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusFromJson(
-        Map<String, dynamic> json) {
-  return PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus()
-    ..playing = json['playing'] as bool
-    ..currentStatus = json['currentStatus'] as int?
-    ..totalTime = json['totalTime'] as int?
-    ..$$typename = json['__typename'] as String?;
-}
-
-Map<String,
-    dynamic> _$PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatusToJson(
-        PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus instance) =>
-    <String, dynamic>{
-      'playing': instance.playing,
-      'currentStatus': instance.currentStatus,
-      'totalTime': instance.totalTime,
-      '__typename': instance.$$typename,
-    };
-
-PlayerMessages$SubscriptionRoot$PlayerMessage
-    _$PlayerMessages$SubscriptionRoot$PlayerMessageFromJson(
-        Map<String, dynamic> json) {
-  return PlayerMessages$SubscriptionRoot$PlayerMessage()
-    ..$$typename = json['__typename'] as String?;
-}
-
-Map<String, dynamic> _$PlayerMessages$SubscriptionRoot$PlayerMessageToJson(
-        PlayerMessages$SubscriptionRoot$PlayerMessage instance) =>
-    <String, dynamic>{
-      '__typename': instance.$$typename,
-    };
-
-PlayerMessages$SubscriptionRoot _$PlayerMessages$SubscriptionRootFromJson(
+VideoFieldsMixin$StreamItem _$VideoFieldsMixin$StreamItemFromJson(
     Map<String, dynamic> json) {
-  return PlayerMessages$SubscriptionRoot()
-    ..playerMessages = PlayerMessages$SubscriptionRoot$PlayerMessage.fromJson(
-        json['playerMessages'] as Map<String, dynamic>);
+  return VideoFieldsMixin$StreamItem()
+    ..url = json['url'] as String
+    ..mimeType = json['mimeType'] as String
+    ..quality = json['quality'] as String
+    ..bitrate = json['bitrate'] as int
+    ..qualityLabel = json['qualityLabel'] as String?
+    ..audioQuality = json['audioQuality'] as String?
+    ..audioChannels = json['audioChannels'] as int?
+    ..averageBitrate = json['averageBitrate'] as int?
+    ..audioSampleRate = json['audioSampleRate'] as String?;
 }
 
-Map<String, dynamic> _$PlayerMessages$SubscriptionRootToJson(
-        PlayerMessages$SubscriptionRoot instance) =>
+Map<String, dynamic> _$VideoFieldsMixin$StreamItemToJson(
+        VideoFieldsMixin$StreamItem instance) =>
     <String, dynamic>{
-      'playerMessages': instance.playerMessages.toJson(),
+      'url': instance.url,
+      'mimeType': instance.mimeType,
+      'quality': instance.quality,
+      'bitrate': instance.bitrate,
+      'qualityLabel': instance.qualityLabel,
+      'audioQuality': instance.audioQuality,
+      'audioChannels': instance.audioChannels,
+      'averageBitrate': instance.averageBitrate,
+      'audioSampleRate': instance.audioSampleRate,
     };
 
-Play$QueryRoot _$Play$QueryRootFromJson(Map<String, dynamic> json) {
-  return Play$QueryRoot()..play = json['play'] as bool;
+Video$QueryRoot$Video _$Video$QueryRoot$VideoFromJson(
+    Map<String, dynamic> json) {
+  return Video$QueryRoot$Video()
+    ..audioOnlyStreams = (json['audioOnlyStreams'] as List<dynamic>)
+        .map((e) =>
+            VideoFieldsMixin$StreamItem.fromJson(e as Map<String, dynamic>))
+        .toList();
 }
 
-Map<String, dynamic> _$Play$QueryRootToJson(Play$QueryRoot instance) =>
+Map<String, dynamic> _$Video$QueryRoot$VideoToJson(
+        Video$QueryRoot$Video instance) =>
     <String, dynamic>{
-      'play': instance.play,
+      'audioOnlyStreams':
+          instance.audioOnlyStreams.map((e) => e.toJson()).toList(),
     };
 
-Pause$QueryRoot _$Pause$QueryRootFromJson(Map<String, dynamic> json) {
-  return Pause$QueryRoot()..pause = json['pause'] as bool;
+Video$QueryRoot _$Video$QueryRootFromJson(Map<String, dynamic> json) {
+  return Video$QueryRoot()
+    ..video =
+        Video$QueryRoot$Video.fromJson(json['video'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$Pause$QueryRootToJson(Pause$QueryRoot instance) =>
+Map<String, dynamic> _$Video$QueryRootToJson(Video$QueryRoot instance) =>
     <String, dynamic>{
-      'pause': instance.pause,
+      'video': instance.video.toJson(),
     };
 
-Resume$QueryRoot _$Resume$QueryRootFromJson(Map<String, dynamic> json) {
-  return Resume$QueryRoot()..resume = json['resume'] as bool;
+PlayArguments _$PlayArgumentsFromJson(Map<String, dynamic> json) {
+  return PlayArguments(
+    videoId: json['videoId'] as String,
+    url: json['url'] as String,
+    filePath: json['filePath'] as String?,
+  );
 }
 
-Map<String, dynamic> _$Resume$QueryRootToJson(Resume$QueryRoot instance) =>
+Map<String, dynamic> _$PlayArgumentsToJson(PlayArguments instance) =>
     <String, dynamic>{
-      'resume': instance.resume,
+      'videoId': instance.videoId,
+      'url': instance.url,
+      'filePath': instance.filePath,
     };
 
-Seek$QueryRoot _$Seek$QueryRootFromJson(Map<String, dynamic> json) {
-  return Seek$QueryRoot()..seek = json['seek'] as bool;
+SeekArguments _$SeekArgumentsFromJson(Map<String, dynamic> json) {
+  return SeekArguments(
+    seconds: json['seconds'] as int,
+  );
 }
 
-Map<String, dynamic> _$Seek$QueryRootToJson(Seek$QueryRoot instance) =>
+Map<String, dynamic> _$SeekArgumentsToJson(SeekArguments instance) =>
     <String, dynamic>{
-      'seek': instance.seek,
+      'seconds': instance.seconds,
     };
 
 SearchArguments _$SearchArgumentsFromJson(Map<String, dynamic> json) {
@@ -188,24 +269,13 @@ Map<String, dynamic> _$SearchArgumentsToJson(SearchArguments instance) =>
       'query': instance.query,
     };
 
-PlayArguments _$PlayArgumentsFromJson(Map<String, dynamic> json) {
-  return PlayArguments(
+VideoArguments _$VideoArgumentsFromJson(Map<String, dynamic> json) {
+  return VideoArguments(
     videoId: json['videoId'] as String,
   );
 }
 
-Map<String, dynamic> _$PlayArgumentsToJson(PlayArguments instance) =>
+Map<String, dynamic> _$VideoArgumentsToJson(VideoArguments instance) =>
     <String, dynamic>{
       'videoId': instance.videoId,
-    };
-
-SeekArguments _$SeekArgumentsFromJson(Map<String, dynamic> json) {
-  return SeekArguments(
-    seconds: json['seconds'] as int,
-  );
-}
-
-Map<String, dynamic> _$SeekArgumentsToJson(SeekArguments instance) =>
-    <String, dynamic>{
-      'seconds': instance.seconds,
     };

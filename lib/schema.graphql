@@ -36,7 +36,7 @@ type PlaylistResult {
 type QueryRoot {
   video(videoId: String!): Video!
   search(query: String!, pageUrl: String): Search!
-  play(videoId: String!): Boolean!
+  play(videoId: String!, url: String!, filePath: String): Boolean!
   pause: Boolean!
   resume: Boolean!
   seek(seconds: Int!): Boolean!

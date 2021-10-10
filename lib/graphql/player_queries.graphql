@@ -1,5 +1,5 @@
-query play($videoId:String!){
-  play(videoId:$videoId)
+query play($videoId:String!,$url:String!,$filePath:String){
+  play(videoId:$videoId,url:$url,filePath:$filePath)
 }
 query pause{
   pause

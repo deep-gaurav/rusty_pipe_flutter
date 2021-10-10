@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rusty_pipe_flutter">
+  <uses-permission android:name="android.permission.INTERNET"/>
+
    <application
         android:label="rusty_pipe_flutter"
         android:icon="@mipmap/ic_launcher">

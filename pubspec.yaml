@@ -38,10 +38,14 @@ dependencies:
     git:
       url: https://github.com/deep-gaurav/rusty_pipe_ui.git
       path: packages/rustypipeuinative
+    # path: ../rusty_pipe_ui/packages/rustypipeuinative
   artemis: "^7.1.1-beta.1"
   gql_websocket_link: ^0.3.1
   web_socket_channel: ^2.1.0
   json_serializable: ^4.1.4
+  cached_network_image: ^3.1.0
+  flutter_cache_manager: ^3.1.2
+  palette_generator: ^0.3.1
   # humanize: ^0.3.0
 dev_dependencies:
   flutter_test:

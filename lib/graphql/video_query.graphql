@@ -1,0 +1,18 @@
+fragment videoFields on Video {
+  audioOnlyStreams {
+      url
+      mimeType
+      quality
+      bitrate
+      qualityLabel
+      audioQuality
+      audioChannels
+      averageBitrate
+      audioSampleRate
+    }
+}
+query video($videoId: String!) {
+  video(videoId: $videoId) {
+    ... videoFields
+  }
+}

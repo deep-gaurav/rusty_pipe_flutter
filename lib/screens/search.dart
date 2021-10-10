@@ -91,14 +91,26 @@ class VideoResultItem extends StatelessWidget {
                 .execute(PauseQuery());
             PlayerManager.of(context).setCurrentlyPlaying(videoResult);
 
-            var result = await RustyPipeClient.of(context)!
+            var vidResullt = await RustyPipeClient.of(context)!
                 .artemisClient
-                .execute(PlayQuery(
-                    variables: PlayArguments(videoId: videoResult.videoId)));
-            print(result);
-            await RustyPipeClient.of(context)!
-                .artemisClient
-                .execute(ResumeQuery());
+                .execute(VideoQuery(
+                    variables: VideoArguments(videoId: videoResult.videoId)));
+            print(
+                'Vid result $vidResullt Error ${vidResullt.errors?.isEmpty} Errors ${vidResullt.errors?.map((e) => e.message)} Data ${vidResullt.data}');
+            var url = vidResullt.data?.video.audioOnlyStreams
+                .firstWhere((element) => element.mimeType.contains('mp4'))
+                .url;
+            if (url != null) {
+              var result = await RustyPipeClient.of(context)!
+                  .artemisClient
+                  .execute(PlayQuery(
+                      variables: PlayArguments(
+                          videoId: videoResult.videoId, url: url)));
+              print(result);
+              await RustyPipeClient.of(context)!
+                  .artemisClient
+                  .execute(ResumeQuery());
+            }
           },
           child: Container(
             child: Row(

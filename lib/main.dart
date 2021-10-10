@@ -36,11 +36,12 @@ class _AppRunnerState extends State<AppRunner> {
   Widget build(BuildContext context) {
     if (port == null) {
       return MaterialApp(
+        theme: ThemeData.dark(),
         home: Scaffold(
           body: Column(
             children: [
               Container(
-                child: Text("Cant start rustypipe."),
+                child: Text("Cant start rustypipe"),
               ),
               TextField(
                 decoration: InputDecoration(helperText: 'Enter port'),

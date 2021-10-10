@@ -13,21 +13,23 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            child: TextField(
-              controller: searchEditingController,
-              onSubmitted: (val) {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => SearchPage(query: val)));
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              child: TextField(
+                controller: searchEditingController,
+                onSubmitted: (val) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SearchPage(query: val)));
+                },
+              ),
             ),
-          ),
-          Container(
-            child: Text('Running on ${RustyPipeClient.of(context)!.port}'),
-          ),
-        ],
+            Container(
+              child: Text('Running on ${RustyPipeClient.of(context)!.port}'),
+            ),
+          ],
+        ),
       ),
     );
   }
