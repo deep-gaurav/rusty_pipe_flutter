@@ -1,18 +1,40 @@
+fragment videoResultFields on VideoResult {
+  videoId
+  url
+  name
+  thumbnail {
+    width
+    height
+    url
+  }
+  isLive
+  duration
+  uploaderName
+  uploadDate
+  viewCount
+}
 fragment videoFields on Video {
   audioOnlyStreams {
-      url
-      mimeType
-      quality
-      bitrate
-      qualityLabel
-      audioQuality
-      audioChannels
-      averageBitrate
-      audioSampleRate
+    url
+    mimeType
+    quality
+    bitrate
+    qualityLabel
+    audioQuality
+    audioChannels
+    averageBitrate
+    audioSampleRate
+  }
+  related {
+    __typename
+    ... on VideoResult {
+      ...videoResultFields
     }
+  }
 }
+
 query video($videoId: String!) {
   video(videoId: $videoId) {
-    ... videoFields
+    ...videoFields
   }
 }

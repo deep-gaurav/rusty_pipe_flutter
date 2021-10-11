@@ -25,6 +25,7 @@ mixin VideoResultFieldsMixin {
 }
 mixin VideoFieldsMixin {
   late List<VideoFieldsMixin$StreamItem> audioOnlyStreams;
+  late List<VideoFieldsMixin$SearchResult> related;
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -309,6 +310,63 @@ class VideoFieldsMixin$StreamItem extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
+class VideoFieldsMixin$SearchResult$VideoResult
+    extends VideoFieldsMixin$SearchResult
+    with EquatableMixin, VideoResultFieldsMixin {
+  VideoFieldsMixin$SearchResult$VideoResult();
+
+  factory VideoFieldsMixin$SearchResult$VideoResult.fromJson(
+          Map<String, dynamic> json) =>
+      _$VideoFieldsMixin$SearchResult$VideoResultFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        videoId,
+        url,
+        name,
+        thumbnail,
+        isLive,
+        duration,
+        uploaderName,
+        uploadDate,
+        viewCount
+      ];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$VideoFieldsMixin$SearchResult$VideoResultToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class VideoFieldsMixin$SearchResult extends JsonSerializable
+    with EquatableMixin {
+  VideoFieldsMixin$SearchResult();
+
+  factory VideoFieldsMixin$SearchResult.fromJson(Map<String, dynamic> json) {
+    switch (json['__typename'].toString()) {
+      case r'VideoResult':
+        return VideoFieldsMixin$SearchResult$VideoResult.fromJson(json);
+      default:
+    }
+    return _$VideoFieldsMixin$SearchResultFromJson(json);
+  }
+
+  @JsonKey(name: '__typename')
+  String? $$typename;
+
+  @override
+  List<Object?> get props => [$$typename];
+  @override
+  Map<String, dynamic> toJson() {
+    switch ($$typename) {
+      case r'VideoResult':
+        return (this as VideoFieldsMixin$SearchResult$VideoResult).toJson();
+      default:
+    }
+    return _$VideoFieldsMixin$SearchResultToJson(this);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Video$QueryRoot$Video extends JsonSerializable
     with EquatableMixin, VideoFieldsMixin {
   Video$QueryRoot$Video();
@@ -317,7 +375,7 @@ class Video$QueryRoot$Video extends JsonSerializable
       _$Video$QueryRoot$VideoFromJson(json);
 
   @override
-  List<Object?> get props => [audioOnlyStreams];
+  List<Object?> get props => [audioOnlyStreams, related];
   @override
   Map<String, dynamic> toJson() => _$Video$QueryRoot$VideoToJson(this);
 }
@@ -809,6 +867,87 @@ class VideoArguments extends JsonSerializable with EquatableMixin {
 
 final VIDEO_QUERY_DOCUMENT = DocumentNode(definitions: [
   FragmentDefinitionNode(
+      name: NameNode(value: 'videoResultFields'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(
+              name: NameNode(value: 'VideoResult'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'videoId'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'url'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'name'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'thumbnail'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'width'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'height'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'url'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ])),
+        FieldNode(
+            name: NameNode(value: 'isLive'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'duration'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'uploaderName'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'uploadDate'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'viewCount'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
+      ])),
+  FragmentDefinitionNode(
       name: NameNode(value: 'videoFields'),
       typeCondition: TypeConditionNode(
           on: NamedTypeNode(name: NameNode(value: 'Video'), isNonNull: false)),
@@ -874,6 +1013,30 @@ final VIDEO_QUERY_DOCUMENT = DocumentNode(definitions: [
                   arguments: [],
                   directives: [],
                   selectionSet: null)
+            ])),
+        FieldNode(
+            name: NameNode(value: 'related'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: '__typename'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              InlineFragmentNode(
+                  typeCondition: TypeConditionNode(
+                      on: NamedTypeNode(
+                          name: NameNode(value: 'VideoResult'),
+                          isNonNull: false)),
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FragmentSpreadNode(
+                        name: NameNode(value: 'videoResultFields'),
+                        directives: [])
+                  ]))
             ]))
       ])),
   OperationDefinitionNode(

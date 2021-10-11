@@ -13,8 +13,8 @@ class RustyPipeClient extends InheritedWidget {
     required this.port,
   }) : super(key: key, child: child);
   @override
-  static RustyPipeClient? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<RustyPipeClient>();
+  static RustyPipeClient of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<RustyPipeClient>()!;
   }
 
   @override
@@ -23,6 +23,10 @@ class RustyPipeClient extends InheritedWidget {
   }
 
   bool isPhone(BuildContext context) {
+    return MediaQuery.of(context).size.width < 600;
+  }
+
+  bool isMobile(BuildContext context) {
     return MediaQuery.of(context).size.width < 600;
   }
 }

@@ -204,6 +204,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
+  expandable_bottom_bar:
+    dependency: "direct main"
+    description:
+      name: expandable_bottom_bar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   fake_async:
     dependency: transitive
     description:
@@ -446,7 +453,7 @@ packages:
     source: hosted
     version: "1.8.0"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       url: "https://pub.dartlang.org"
@@ -541,7 +548,7 @@ packages:
     description:
       path: "packages/rustypipeuinative"
       ref: HEAD
-      resolved-ref: "5d6a33e6965c55f3e2ee5bb76e8398dbdcbe14c8"
+      resolved-ref: "6740f923d9157979568d351f21c1334600c7cd78"
       url: "https://github.com/deep-gaurav/rusty_pipe_ui.git"
     source: git
     version: "0.0.1"

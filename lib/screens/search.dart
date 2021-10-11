@@ -1,4 +1,5 @@
 import 'package:artemis/schema/graphql_response.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -76,73 +77,119 @@ class _SearchPageState extends State<SearchPage> {
 class VideoResultItem extends StatelessWidget {
   final VideoResultFieldsMixin videoResult;
 
-  const VideoResultItem({required this.videoResult, Key? key})
+  final bool inQueue;
+  final bool isPlaying;
+
+  const VideoResultItem(
+      {required this.videoResult,
+      Key? key,
+      this.inQueue = false,
+      this.isPlaying = false})
       : super(key: key);
+
+  String get views => humanizeNumber(videoResult.viewCount ?? 0);
+  String get duration =>
+      humanizeDuration(Duration(seconds: videoResult.duration ?? 0));
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        InkWell(
-          onTap: () async {
-            await RustyPipeClient.of(context)!
-                .artemisClient
-                .execute(PauseQuery());
-            PlayerManager.of(context).setCurrentlyPlaying(videoResult);
+    return Container(
+      height: inQueue ? 60 : 100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () async {
+                await RustyPipeClient.of(context)!
+                    .artemisClient
+                    .execute(PauseQuery());
+                PlayerManager.of(context).setCurrentlyPlaying(
+                    videoResult, context,
+                    setQueue: !inQueue);
 
-            var vidResullt = await RustyPipeClient.of(context)!
-                .artemisClient
-                .execute(VideoQuery(
-                    variables: VideoArguments(videoId: videoResult.videoId)));
-            print(
-                'Vid result $vidResullt Error ${vidResullt.errors?.isEmpty} Errors ${vidResullt.errors?.map((e) => e.message)} Data ${vidResullt.data}');
-            var url = vidResullt.data?.video.audioOnlyStreams
-                .firstWhere((element) => element.mimeType.contains('mp4'))
-                .url;
-            if (url != null) {
-              var result = await RustyPipeClient.of(context)!
-                  .artemisClient
-                  .execute(PlayQuery(
-                      variables: PlayArguments(
-                          videoId: videoResult.videoId, url: url)));
-              print(result);
-              await RustyPipeClient.of(context)!
-                  .artemisClient
-                  .execute(ResumeQuery());
-            }
-          },
-          child: Container(
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 20, right: 20),
-                  height: 60,
-                  child: Image.network(videoResult.thumbnail.first.url),
+                // var vidResullt = await RustyPipeClient.of(context)!
+                //     .artemisClient
+                //     .execute(VideoQuery(
+                //         variables: VideoArguments(videoId: videoResult.videoId)));
+                // print(
+                //     'Vid result $vidResullt Error ${vidResullt.errors?.isEmpty} Errors ${vidResullt.errors?.map((e) => e.message)} Data ${vidResullt.data}');
+                // var url = vidResullt.data?.video.audioOnlyStreams
+                //     .firstWhere((element) => element.mimeType.contains('mp4'))
+                //     .url;
+                // if (url != null) {
+                //   var result = await RustyPipeClient.of(context)!
+                //       .artemisClient
+                //       .execute(PlayQuery(
+                //           variables: PlayArguments(
+                //               videoId: videoResult.videoId, url: url)));
+                //   print(result);
+                // }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isPlaying ? Theme.of(context).highlightColor : null,
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        videoResult.name,
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                padding: EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Stack(
+                      children: [
+                        Opacity(
+                          opacity: isPlaying ? 0.5 : 1,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 20, right: 20),
+                            child: CachedNetworkImage(
+                                imageUrl: videoResult.thumbnail.first.url),
+                          ),
+                        ),
+                        if (isPlaying)
+                          Positioned.fill(
+                              child: Center(
+                            child: Icon(Icons.pause),
+                          ))
+                      ],
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            videoResult.name,
+                            style:
+                                Theme.of(context).textTheme.headline6!.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                            maxLines: inQueue ? 1 : 2,
+                          ),
+                          Text(
+                            inQueue
+                                ? videoResult.uploaderName.toString()
+                                : "${videoResult.uploaderName} • $views • $duration",
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
                       ),
-                      Text(
-                        "${videoResult.uploaderName} • ${humanizeNumber(videoResult.viewCount ?? 0)} • ${humanizeDuration(Duration(seconds: videoResult.duration ?? 0))}",
-                        textAlign: TextAlign.left,
+                    ),
+                    if (inQueue)
+                      Container(
+                        margin: EdgeInsets.only(left: 10, right: 35),
+                        child: Text(
+                          duration,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-        Divider(),
-      ],
+          Divider(
+            height: 1,
+          ),
+        ],
+      ),
     );
   }
 }

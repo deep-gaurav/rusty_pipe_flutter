@@ -205,12 +205,62 @@ Map<String, dynamic> _$VideoFieldsMixin$StreamItemToJson(
       'audioSampleRate': instance.audioSampleRate,
     };
 
+VideoFieldsMixin$SearchResult$VideoResult
+    _$VideoFieldsMixin$SearchResult$VideoResultFromJson(
+        Map<String, dynamic> json) {
+  return VideoFieldsMixin$SearchResult$VideoResult()
+    ..videoId = json['videoId'] as String
+    ..url = json['url'] as String
+    ..name = json['name'] as String
+    ..thumbnail = (json['thumbnail'] as List<dynamic>)
+        .map((e) => VideoResultFieldsMixin$Thumbnail.fromJson(
+            e as Map<String, dynamic>))
+        .toList()
+    ..isLive = json['isLive'] as bool
+    ..duration = json['duration'] as int?
+    ..uploaderName = json['uploaderName'] as String?
+    ..uploadDate = json['uploadDate'] as String?
+    ..viewCount = json['viewCount'] as int?
+    ..$$typename = json['__typename'] as String?;
+}
+
+Map<String, dynamic> _$VideoFieldsMixin$SearchResult$VideoResultToJson(
+        VideoFieldsMixin$SearchResult$VideoResult instance) =>
+    <String, dynamic>{
+      'videoId': instance.videoId,
+      'url': instance.url,
+      'name': instance.name,
+      'thumbnail': instance.thumbnail.map((e) => e.toJson()).toList(),
+      'isLive': instance.isLive,
+      'duration': instance.duration,
+      'uploaderName': instance.uploaderName,
+      'uploadDate': instance.uploadDate,
+      'viewCount': instance.viewCount,
+      '__typename': instance.$$typename,
+    };
+
+VideoFieldsMixin$SearchResult _$VideoFieldsMixin$SearchResultFromJson(
+    Map<String, dynamic> json) {
+  return VideoFieldsMixin$SearchResult()
+    ..$$typename = json['__typename'] as String?;
+}
+
+Map<String, dynamic> _$VideoFieldsMixin$SearchResultToJson(
+        VideoFieldsMixin$SearchResult instance) =>
+    <String, dynamic>{
+      '__typename': instance.$$typename,
+    };
+
 Video$QueryRoot$Video _$Video$QueryRoot$VideoFromJson(
     Map<String, dynamic> json) {
   return Video$QueryRoot$Video()
     ..audioOnlyStreams = (json['audioOnlyStreams'] as List<dynamic>)
         .map((e) =>
             VideoFieldsMixin$StreamItem.fromJson(e as Map<String, dynamic>))
+        .toList()
+    ..related = (json['related'] as List<dynamic>)
+        .map((e) =>
+            VideoFieldsMixin$SearchResult.fromJson(e as Map<String, dynamic>))
         .toList();
 }
 
@@ -219,6 +269,7 @@ Map<String, dynamic> _$Video$QueryRoot$VideoToJson(
     <String, dynamic>{
       'audioOnlyStreams':
           instance.audioOnlyStreams.map((e) => e.toJson()).toList(),
+      'related': instance.related.map((e) => e.toJson()).toList(),
     };
 
 Video$QueryRoot _$Video$QueryRootFromJson(Map<String, dynamic> json) {
