@@ -22,6 +22,6 @@ class ThemeManager extends InheritedWidget {
   setColorFromImage(ImageProvider provider) async {
     var pallete = await PaletteGenerator.fromImageProvider(provider);
     managerKey.currentState!
-        .setColor(pallete.vibrantColor?.color ?? pallete.dominantColor!.color);
+        .setColor(pallete.dominantColor?.color ?? pallete.vibrantColor!.color);
   }
 }

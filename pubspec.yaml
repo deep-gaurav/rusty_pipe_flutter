@@ -50,6 +50,7 @@ dependencies:
   # humanize: ^0.3.0
 
   expandable_bottom_bar: ^2.0.2
+  audio_service: ^0.18.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

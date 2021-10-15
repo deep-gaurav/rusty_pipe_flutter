@@ -43,7 +43,11 @@ class _SearchPageState extends State<SearchPage> {
             var results = ass.data?.data?.search.result;
             var items = results?.map((e) {
               if (e is Search$QueryRoot$Search$SearchResult$VideoResult) {
-                return VideoResultItem(videoResult: e);
+                if (Duration(seconds: e.duration ?? 0).inMinutes < 15) {
+                  return VideoResultItem(videoResult: e);
+                } else {
+                  return Container();
+                }
               } else {
                 return Container();
               }

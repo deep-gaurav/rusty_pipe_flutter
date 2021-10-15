@@ -1,10 +1,12 @@
 import 'package:artemis/artemis.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable_bottom_bar/expandable_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rusty_pipe_flutter/api/api.graphql.dart';
 import 'package:rusty_pipe_flutter/networking/client_provider.dart';
+import 'package:rusty_pipe_flutter/networking/platform_notification.dart';
 import 'package:rusty_pipe_flutter/networking/songs_manager.dart';
 import 'package:rusty_pipe_flutter/networking/theme_manager.dart';
 import 'package:rusty_pipe_flutter/screens/search.dart';
@@ -14,7 +16,7 @@ import 'dart:math' as math;
 import 'package:rusty_pipe_flutter/widgets/custom_nav_bar.dart';
 
 // repeat states enum
-enum Repeat { off, all, single }
+// enum Repeat { off, all, single }
 
 class PlayerManager extends InheritedWidget {
   const PlayerManager({
@@ -74,13 +76,14 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
 
   bool isloading = false;
 
-  Repeat repeatState = Repeat.off;
+  AudioServiceRepeatMode repeatState = AudioServiceRepeatMode.none;
 
   Stream<GraphQLResponse<PlayerMessages$SubscriptionRoot>>? playerSubscription;
 
   late BottomBarController bottomBarController;
   late BottomBarController bottomBarController2;
 
+  late PlayerNotificationManager playerNotificationManager;
   // Map<String, VideoFieldsMixin> preparedDatas = {};
 
   ScrollController queueScrollController = ScrollController();
@@ -93,6 +96,7 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
     setTheme();
     setQueuePosition();
     prepareNext();
+    playerNotificationManager.updateCurrentItem();
   }
 
   prepareNext() async {
@@ -133,7 +137,13 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
 
   List<VideoResultFieldsMixin> queue = [];
 
-  previous() {}
+  previous() {
+    var current = queue
+        .indexWhere((element) => element.videoId == currentyPlaying!.videoId);
+    PlayerManager.of(context)
+        .setCurrentlyPlaying(queue[(current - 1) % queue.length], context);
+  }
+
   resume() async {
     if (isEnded) {
       await RustyPipeClient.of(context)!.artemisClient.execute(SeekQuery(
@@ -149,16 +159,14 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
   next() {
     var current = queue
         .indexWhere((element) => element.videoId == currentyPlaying!.videoId);
-    if (current < queue.length - 1) {
-      PlayerManager.of(context)
-          .setCurrentlyPlaying(queue[current + 1], context);
-    }
+    PlayerManager.of(context)
+        .setCurrentlyPlaying(queue[(current + 1) % queue.length], context);
   }
 
   repeat() {
     setState(() {
-      repeatState = Repeat.values[(repeatState.index + 1) %
-          Repeat.values.length]; // change to next state
+      repeatState = AudioServiceRepeatMode.values[(repeatState.index + 1) %
+          AudioServiceRepeatMode.values.length]; // change to next state
     });
   }
 
@@ -171,7 +179,10 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
 
   setQueue(List<VideoResultFieldsMixin> queue) {
     setState(() {
-      this.queue = queue;
+      this.queue = queue
+          .where((element) =>
+              Duration(seconds: element.duration ?? 0).inMinutes < 15)
+          .toList();
     });
     prepareNext();
   }
@@ -185,27 +196,29 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
   void onEnd() async {
     // check and handle repeat
     switch (repeatState) {
-      case Repeat.off:
+      case AudioServiceRepeatMode.none:
         next();
         break;
-      case Repeat.all:
+      case AudioServiceRepeatMode.all:
+      case AudioServiceRepeatMode.group:
         next();
         break;
-      case Repeat.single:
-        await RustyPipeClient.of(context)!.artemisClient.execute(SeekQuery(
-            variables: SeekArguments(
-                seconds: 0 - (playingStatus?.currentStatus ?? 0))));
+      case AudioServiceRepeatMode.one:
+        await seekTo(0);
+        resume();
         break;
     }
   }
 
   Icon getRepeatIcon(BuildContext context) {
     switch (repeatState) {
-      case Repeat.off:
+      case AudioServiceRepeatMode.none:
         return Icon(Icons.repeat, color: Theme.of(context).disabledColor);
-      case Repeat.all:
+
+      case AudioServiceRepeatMode.all:
+      case AudioServiceRepeatMode.group:
         return const Icon(Icons.repeat);
-      case Repeat.single:
+      case AudioServiceRepeatMode.one:
         return const Icon(Icons.repeat_one);
     }
   }
@@ -214,7 +227,16 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
   void initState() {
     bottomBarController = BottomBarController(vsync: this);
     bottomBarController2 = BottomBarController(vsync: this);
+    playerNotificationManager = PlayerNotificationManager(
+        playerKey: widget.key as GlobalKey<PlayerState>);
 
+    AudioService.init(
+      builder: () => playerNotificationManager,
+      config: AudioServiceConfig(
+        androidNotificationChannelId: 'so.deep.me.rustypipe',
+        androidNotificationChannelName: 'Music playback',
+      ),
+    ).then((value) => playerNotificationManager = value);
     bottomBarController.addListener(() {
       if (bottomBarController.isClosing) {
         bottomBarController2.close();
@@ -245,11 +267,18 @@ class PlayerState extends State<Player> with TickerProviderStateMixin {
                 element.data?.playerMessages;
 
             setState(() {
+              var oldisLoading = isloading;
+              var oldplaying = playingStatus?.playing;
               playingStatus = (message
                   as PlayerMessages$SubscriptionRoot$PlayerMessage$PlayerStatus);
               if (playingStatus!.playing) {
                 isloading = false;
+                playerNotificationManager.play();
               }
+              // if (oldplaying != playingStatus?.playing ||
+              //     oldisLoading != isloading) {
+              playerNotificationManager.updateState();
+              // }
             });
           }
         }

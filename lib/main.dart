@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:artemis/artemis.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gql_websocket_link/gql_websocket_link.dart';
@@ -38,8 +39,10 @@ class _AppRunnerState extends State<AppRunner> {
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       setState(() {
-        port = Rustypipeuinative.getPort();
-        Rustypipeuinative.startServer(port!);
+        if (kReleaseMode || Platform.isAndroid) {
+          port = Rustypipeuinative.getPort();
+          Rustypipeuinative.startServer(port!);
+        }
       });
       getApplicationSupportDirectory().then((value) async {
         var videoDir = Directory(value.path + Platform.pathSeparator + 'video');
@@ -128,16 +131,16 @@ class MyAppState extends State<MyApp> {
   MaterialColor currentColor = Colors.green;
 
   Map<int, Color> colorCodes(Color color) => {
-        50: color.withOpacity(.1),
-        100: color.withOpacity(.2),
-        200: color.withOpacity(.3),
-        300: color.withOpacity(.4),
-        400: color.withOpacity(.5),
-        500: color.withOpacity(.6),
-        600: color.withOpacity(.7),
-        700: color.withOpacity(.8),
-        800: color.withOpacity(.9),
-        900: color.withOpacity(1),
+        50: Color.alphaBlend(color.withOpacity(.1), Colors.white),
+        100: Color.alphaBlend(color.withOpacity(.2), Colors.white),
+        200: Color.alphaBlend(color.withOpacity(.3), Colors.white),
+        300: Color.alphaBlend(color.withOpacity(.4), Colors.white),
+        400: Color.alphaBlend(color.withOpacity(.5), Colors.white),
+        500: Color.alphaBlend(color.withOpacity(.6), Colors.white),
+        600: Color.alphaBlend(color.withOpacity(.7), Colors.white),
+        700: Color.alphaBlend(color.withOpacity(.8), Colors.white),
+        800: Color.alphaBlend(color.withOpacity(.9), Colors.white),
+        900: Color.alphaBlend(color.withOpacity(1), Colors.white),
       };
   setColor(Color color) {
     print('Set color $color');

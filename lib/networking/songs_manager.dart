@@ -61,8 +61,10 @@ class SongsManager extends InheritedWidget {
     late VideoFieldsMixin videoData;
     if (await videoFile.exists()) {
       print('Video file cached');
-      videoData = Video$QueryRoot$Video.fromJson(
-          json.decode(await videoFile.readAsString()));
+
+      var videoString = await videoFile.readAsString();
+      print(videoString);
+      videoData = Video$QueryRoot$Video.fromJson(json.decode(videoString));
     } else {
       print('video file Not cached');
       var data = await loadVideo(video.videoId, RustyPipeClient.of(context)!);
